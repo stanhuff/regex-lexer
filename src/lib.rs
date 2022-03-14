@@ -226,7 +226,13 @@ impl<'l, 't, T: 't> Iterator for Tokens<'l, 't, T> {
                     (m.end(), i)
                 })
                 .max_by_key(|(len, _)| *len)
-                .unwrap();
+                .unwrap_or_else(|| {
+                    panic!(
+                        "failed to parse at position {}, character {}",
+                        self.position,
+                        string.chars().next().unwrap()
+                    )
+                });
 
             let tok_str = &self.source[self.position..self.position + len];
             self.position += len;
